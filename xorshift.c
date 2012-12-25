@@ -4,6 +4,7 @@
 #include <time.h>
 
 #define MAXPATHSIZE 256
+#define GIGABYTE 1073741824
 
 static unsigned long w = 123456789;
 
@@ -48,11 +49,16 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
+  clock_t start = clock();
   for (uint64_t noOfBlock = 0; noOfBlock < blockCount; noOfBlock++) {
     fillrandom(buffer, blockSize);
     fwrite(buffer, blockSize, 1, fout);
     fflush(fout);
   }
+
+  double elapsedTime = (double)(clock() - start)/CLOCKS_PER_SEC;
+  printf("Elapsed time: %.2f[s], %lf GB, %lf Gbps\n", elapsedTime, (double)(blockCount * blockSize) / GIGABYTE,
+         (double)(blockCount * blockSize) / GIGABYTE / elapsedTime * 8);
 
   free(buffer);
 
